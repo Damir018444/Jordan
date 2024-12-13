@@ -9,21 +9,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -31,22 +22,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,7 +44,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            FirstScreen()
+            SignIn()
         }
     }
 }
@@ -136,110 +118,7 @@ fun SplashScreen(navController: NavController){
 
 
 
-
-
-
 //@Preview(showBackground = true, showSystemUi = false)
-@Composable
-fun WelcomeScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF007FFF), // Верхний цвет
-                        Color(0xFF56CCF2)  // Нижний цвет
-                    )
-                )
-            )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(40.dp)) // Для отступа сверху
-
-            Text(
-                text = "ДОБРО\nПОЖАЛОВАТЬ",
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                lineHeight = 34.sp
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.welcome_boot1), // Замените на ваш ресурс
-                contentDescription = null,
-                modifier = Modifier
-                    .size(200.dp) // Настройте размер изображения
-            )
-
-            Spacer(modifier = Modifier.height(16.dp)) // Отступ между изображением и линией
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(12.dp, 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(2.dp))
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(24.dp, 4.dp)
-                        .background(Color.White, RoundedCornerShape(2.dp))
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(12.dp, 4.dp)
-                        .background(Color.Gray, RoundedCornerShape(2.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = { /* Действие по нажатию */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(Color.White, Color.White, Color.White, Color.White),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = "Начать",
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-@Preview(showBackground = true, showSystemUi = false)
 @Composable
 private fun FirstScreen(){//navController: NavController){
     Box (
@@ -253,103 +132,89 @@ private fun FirstScreen(){//navController: NavController){
                 )
             )
             .fillMaxSize(),
-        //contentAlignment = Alignment.Center
     ) {
 
         Image (
-            painter = painterResource(id = R.drawable.welcome_text1),
-            contentScale = ContentScale.FillBounds,
+            painter = painterResource(id = R.drawable.welcome1_text),
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
                 .size(267.dp, 70.dp)
                 .align(Alignment.TopCenter)
-                //.padding(bottom = 121.dp)
                 .offset(y = 121.dp)
         )
 
         Image (
             painter = painterResource(id = R.drawable.zakoruchka4),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
                 .size(27.dp, 30.dp)
-                //.padding(start = 59.dp, top = 102.dp)
                 .offset(59.dp, 102.dp)
         )
 
         Image (
             painter = painterResource(id = R.drawable.zakoruchka3),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
                 .size(134.dp, 18.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 210.dp)
-            //.offset((-162).dp, 102.dp)
         )
 
         Image (
             painter = painterResource(id = R.drawable.welcome_boot1),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.FillWidth,
             contentDescription = "App title",
             modifier = Modifier
                 .size(671.37.dp, 588.05.dp)
                 .align(Alignment.TopCenter)
-                //.padding(top = 102.dp)
                 .offset(y = 102.dp)
         )
 
         Image (
             painter = painterResource(id = R.drawable.welcome_indicator1),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
                 .size(118.dp, 5.dp)
                 .align(Alignment.TopCenter)
-                //.padding(top = 102.dp)
                 .offset(y = 571.dp)
         )
 
         Image (
-            painter = painterResource(id = R.drawable.zakoruchki_group),
-            contentScale = ContentScale.FillBounds,
+            painter = painterResource(id = R.drawable.welcome_zakoruchki),
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
                 .size(315.93.dp, 524.38.dp)
                 .align(Alignment.TopCenter)
-                //.padding(top = 102.dp)
                 .offset(y = 192.dp)
         )
 
 
 
-
-
-
-
-
-
-
         Button (
             onClick = { },//navController.navigate("second") },
-            colors = ButtonColors(Color.White, Color.White, Color.White, Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.back_button),
+                contentColor = colorResource(id = R.color.back_button),
+            ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
                 .size(335.dp, 50.dp)
                 .align(Alignment.TopCenter)
-                //.padding(top = 726.dp)
                 .offset(y = 726.dp)
-                //.align(Alignment.BottomCenter)
 
         ) {
             Text (
                 "Начать",
-                color = Color.Black,
-                //fontFamily = FontFamily(Font(R.font.raleway_bold)),
+                color = colorResource(id = R.color.text),
+                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontSize = 14.sp,
                 fontWeight = FontWeight(600),
                 modifier = Modifier
-                //.fillMaxSize()
             )
         }
     }
@@ -358,60 +223,6 @@ private fun FirstScreen(){//navController: NavController){
 
 
 
-
-
-
-
-
-
-
-
-/*@Preview(showBackground = true, showSystemUi = false)
-@Composable
-private fun FirstScreen(){//navController: NavController){
-    Box (
-        modifier = Modifier
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        colorResource(id = R.color.gradient1),
-                        colorResource(id = R.color.gradient2)
-                    )
-                )
-            )
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image (
-            painter = painterResource(id = R.drawable.welcome_fon1),
-            contentScale = ContentScale.FillBounds,
-            contentDescription = "App title",
-            modifier = Modifier
-                .fillMaxSize()
-                //.offset(y = (-45).dp)
-        )
-
-        Button (
-            onClick = { },//navController.navigate("second") },
-            colors = ButtonColors(Color.White, Color.White, Color.White, Color.White),
-            shape = RoundedCornerShape(13.dp),
-            modifier = Modifier
-                .fillMaxWidth(0.9F)
-                .fillMaxHeight(0.06F)
-                .align(Alignment.BottomCenter)
-                .offset(y = (-40).dp)
-        ) {
-            Text (
-                "Начать",
-                color = Color.Black,
-                //fontFamily = FontFamily(Font(R.font.raleway_bold)),
-                fontSize = 14.sp,
-                modifier = Modifier
-                    //.fillMaxSize()
-            )
-        }
-    }
-}*/
 
 
 
@@ -432,21 +243,89 @@ private fun SecondScreen(){//navController: NavController){
                 )
             )
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
+
+
+
         Image (
-            painter = painterResource(id = R.drawable.welcome_boot1),
+            painter = painterResource(id = R.drawable.welcome2_smile),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(45.dp, 45.dp)
+                .offset(304.dp, 113.dp)
+        )
+
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome2_zakoruchka),
             contentScale = ContentScale.FillBounds,
             contentDescription = "App title",
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.75F)
-            //.offset(y = (-45).dp)
+                .size(54.dp, 90.dp)
+                .offset(63.31.dp, 130.dp)
         )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome_boot2),
+            contentScale = ContentScale.Crop,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(309.32.dp, 200.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 130.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.boot2_shadow),
+            contentScale = ContentScale.Crop,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(218.dp, 17.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 288.85.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome2_text),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(315.dp, 89.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 453.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome2_desc),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(322.dp, 48.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 554.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome_indicator2),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(118.dp, 5.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 642.dp)
+        )
+
+
+
+
 
         Button (
             onClick = { }, //navController.navigate("third") },
-            colors = ButtonColors(Color.White, Color.White, Color.White, Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.back_button),
+                contentColor = colorResource(id = R.color.back_button),
+            ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
                 .fillMaxWidth(0.9F)
@@ -455,12 +334,12 @@ private fun SecondScreen(){//navController: NavController){
                 .offset(y = (-40).dp)
         ) {
             Text (
-                "Начать",
-                color = Color.Black,
-                //fontFamily = FontFamily(Font(R.font.raleway_bold)),
+                "Далее",
+                color = colorResource(id = R.color.text),
+                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontSize = 14.sp,
+                fontWeight = FontWeight(600),
                 modifier = Modifier
-                //.fillMaxSize()
             )
         }
     }
@@ -472,7 +351,7 @@ private fun SecondScreen(){//navController: NavController){
 
 
 
-//@Preview(showBackground = true, showSystemUi = false)
+@Preview(showBackground = true, showSystemUi = false)
 @Composable
 private fun ThirdScreen(){
     Box (
@@ -486,21 +365,56 @@ private fun ThirdScreen(){
                 )
             )
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
+
         Image (
-            painter = painterResource(id = R.drawable.welcome_boot1),
-            contentScale = ContentScale.FillBounds,
+            painter = painterResource(id = R.drawable.welcome_boot3),
+            contentScale = ContentScale.Fit,
             contentDescription = "App title",
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.75F)
-            //.offset(y = (-45).dp)
+                .size(465.47.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 45.dp)
         )
 
+        Image (
+            painter = painterResource(id = R.drawable.welcome3_text),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(315.dp, 89.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 453.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome3_desc),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(322.dp, 48.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 554.dp)
+        )
+
+        Image (
+            painter = painterResource(id = R.drawable.welcome_indicator3),
+            contentScale = ContentScale.Fit,
+            contentDescription = "App title",
+            modifier = Modifier
+                .size(118.dp, 5.dp)
+                .align(Alignment.TopCenter)
+                .offset(y = 642.dp)
+        )
+
+
+
         Button (
-            onClick = {  },
-            colors = ButtonColors(Color.White, Color.White, Color.White, Color.White),
+            onClick = { }, //navController.navigate("third") },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.back_button),
+                contentColor = colorResource(id = R.color.back_button),
+            ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
                 .fillMaxWidth(0.9F)
@@ -509,13 +423,22 @@ private fun ThirdScreen(){
                 .offset(y = (-40).dp)
         ) {
             Text (
-                "Начать",
-                color = Color.Black,
-                //fontFamily = FontFamily(Font(R.font.raleway_bold)),
+                "Далее",
+                color = colorResource(id = R.color.text),
+                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontSize = 14.sp,
+                fontWeight = FontWeight(600),
                 modifier = Modifier
-                //.fillMaxSize()
             )
         }
     }
 }
+
+
+
+
+
+
+
+
+

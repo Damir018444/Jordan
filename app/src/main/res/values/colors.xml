@@ -4,4 +4,16 @@
     <color name="gradient1">#48B2E7</color>
     <color name="gradient2">#0076B1</color>
 
+    <color name="white">#FFFFFF</color>
+    <color name="text">#2B2B2B</color>
+
+    <color name="tf_placeholder">#6A6A6A</color>
+    <color name="tf_back">#F7F7F9</color>
+    <color name="tf_text">#2B2B2B</color>
+
+    <color name="back_button">#F7F7F9</color> <!--#F7F7F9-->
+
+
+
+
 </resources>
