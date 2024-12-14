@@ -1,9 +1,11 @@
 package com.example.jordan
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,6 +32,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,26 +62,38 @@ fun Start(){
         composable("splash") { SplashScreen(navController) }
         composable(
             "first",
-            enterTransition = { fadeIn(animationSpec = tween(2000)) },
-            exitTransition = { fadeOut(animationSpec = tween(2000)) }
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+        ) { FirstScreen()}//navController) }
+        composable(
+            "first2",
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
         ) { FirstScreen()}//navController) }
         composable(
             "second",
-            enterTransition = { fadeIn(animationSpec = tween(2000)) },
-            exitTransition = { fadeOut(animationSpec = tween(2000)) }
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
             ) { SecondScreen()}//navController) }
         composable(
             "third",
-            enterTransition = { fadeIn(animationSpec = tween(2000)) },
-            exitTransition = { fadeOut(animationSpec = tween(2000)) }
-        ) { ThirdScreen() }
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+        ) { ThirdScreen()}//navController) }
+        composable(
+            "signin",
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+        ) { SignIn() }//navController) }
     }
 }
 
 
 
 
-
+/*@Preview(showBackground = true, showSystemUi = false,
+    device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
+)*/
 @Composable
 fun SplashScreen(navController: NavController){
     Box (
@@ -118,7 +133,9 @@ fun SplashScreen(navController: NavController){
 
 
 
-//@Preview(showBackground = true, showSystemUi = false)
+/*@Preview(showBackground = true, showSystemUi = false,
+    device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
+)*/
 @Composable
 private fun FirstScreen(){//navController: NavController){
     Box (
@@ -134,10 +151,14 @@ private fun FirstScreen(){//navController: NavController){
             .fillMaxSize(),
     ) {
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome1_text),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
+        Text (
+            "Добро пожаловать",
+            color = colorResource(id = R.color.white),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(900),
+            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontSize = 35.sp,
+            lineHeight = 35.22.sp,
             modifier = Modifier
                 .size(267.dp, 70.dp)
                 .align(Alignment.TopCenter)
@@ -198,8 +219,8 @@ private fun FirstScreen(){//navController: NavController){
         Button (
             onClick = { },//navController.navigate("second") },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.back_button),
-                contentColor = colorResource(id = R.color.back_button),
+                containerColor = colorResource(id = R.color.button_back1),
+                contentColor = colorResource(id = R.color.button_back1),
             ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
@@ -212,8 +233,9 @@ private fun FirstScreen(){//navController: NavController){
                 "Начать",
                 color = colorResource(id = R.color.text),
                 //fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                fontSize = 14.sp,
                 fontWeight = FontWeight(600),
+                lineHeight = 16.44.sp,
+                fontSize = 14.sp,
                 modifier = Modifier
             )
         }
@@ -229,7 +251,9 @@ private fun FirstScreen(){//navController: NavController){
 
 
 
-//@Preview(showBackground = true, showSystemUi = false)
+@Preview(showBackground = true, showSystemUi = false,
+    device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
+)
 @Composable
 private fun SecondScreen(){//navController: NavController){
     Box (
@@ -247,61 +271,40 @@ private fun SecondScreen(){//navController: NavController){
 
 
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome2_smile),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
-            modifier = Modifier
-                .size(45.dp, 45.dp)
-                .offset(304.dp, 113.dp)
-        )
-
 
         Image (
-            painter = painterResource(id = R.drawable.welcome2_zakoruchka),
+            painter = painterResource(id = R.drawable.welcome_fon2),
             contentScale = ContentScale.FillBounds,
             contentDescription = "App title",
             modifier = Modifier
-                .size(54.dp, 90.dp)
-                .offset(63.31.dp, 130.dp)
+                .fillMaxSize()
+
         )
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome_boot2),
-            contentScale = ContentScale.Crop,
-            contentDescription = "App title",
-            modifier = Modifier
-                .size(309.32.dp, 200.dp)
-                .align(Alignment.TopCenter)
-                .offset(y = 130.dp)
-        )
-
-        Image (
-            painter = painterResource(id = R.drawable.boot2_shadow),
-            contentScale = ContentScale.Crop,
-            contentDescription = "App title",
-            modifier = Modifier
-                .size(218.dp, 17.dp)
-                .align(Alignment.TopCenter)
-                .offset(y = 288.85.dp)
-        )
-
-        Image (
-            painter = painterResource(id = R.drawable.welcome2_text),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
+        Text (
+            "Начёнем путешествие",
+            color = colorResource(id = R.color.white),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(700),
+            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontSize = 34.sp,
+            lineHeight = 44.2.sp,
             modifier = Modifier
                 .size(315.dp, 89.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 453.dp)
         )
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome2_desc),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
+        Text (
+            "Умная, великолепная и модная\nколлекция Изучите сейчас",
+            color = colorResource(id = R.color.white),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(400),
+            //fontFamily = FontFamily(Font(R.font.poppins_regular)),
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
             modifier = Modifier
-                .size(322.dp, 48.dp)
+                .size(388.85.dp, 48.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 554.dp)
         )
@@ -323,13 +326,12 @@ private fun SecondScreen(){//navController: NavController){
         Button (
             onClick = { }, //navController.navigate("third") },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.back_button),
-                contentColor = colorResource(id = R.color.back_button),
+                containerColor = colorResource(id = R.color.button_back1),
+                contentColor = colorResource(id = R.color.button_back1),
             ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
-                .fillMaxWidth(0.9F)
-                .fillMaxHeight(0.06F)
+                .size(335.dp,50.dp)
                 .align(Alignment.BottomCenter)
                 .offset(y = (-40).dp)
         ) {
@@ -337,8 +339,9 @@ private fun SecondScreen(){//navController: NavController){
                 "Далее",
                 color = colorResource(id = R.color.text),
                 //fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                fontSize = 14.sp,
                 fontWeight = FontWeight(600),
+                lineHeight = 16.44.sp,
+                fontSize = 14.sp,
                 modifier = Modifier
             )
         }
@@ -351,9 +354,9 @@ private fun SecondScreen(){//navController: NavController){
 
 
 
-@Preview(showBackground = true, showSystemUi = false)
+//@Preview(showBackground = true, showSystemUi = false)
 @Composable
-private fun ThirdScreen(){
+private fun ThirdScreen(){//navController: NavController){
     Box (
         modifier = Modifier
             .background(
@@ -377,20 +380,28 @@ private fun ThirdScreen(){
                 .offset(y = 45.dp)
         )
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome3_text),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
+        Text (
+            "У Вас Есть Сила, Чтобы",
+            color = colorResource(id = R.color.white),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(700),
+            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontSize = 34.sp,
+            lineHeight = 44.2.sp,
             modifier = Modifier
                 .size(315.dp, 89.dp)
                 .align(Alignment.TopCenter)
                 .offset(y = 453.dp)
         )
 
-        Image (
-            painter = painterResource(id = R.drawable.welcome3_desc),
-            contentScale = ContentScale.Fit,
-            contentDescription = "App title",
+        Text (
+            "В вашей комнате много красивых и привлекательных растений",
+            color = colorResource(id = R.color.white),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight(400),
+            //fontFamily = FontFamily(Font(R.font.poppins_regular)),
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
             modifier = Modifier
                 .size(322.dp, 48.dp)
                 .align(Alignment.TopCenter)
@@ -410,15 +421,14 @@ private fun ThirdScreen(){
 
 
         Button (
-            onClick = { }, //navController.navigate("third") },
+            onClick = { }, //navController.navigate("signin") },
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.back_button),
-                contentColor = colorResource(id = R.color.back_button),
+                containerColor = colorResource(id = R.color.button_back1),
+                contentColor = colorResource(id = R.color.button_back1),
             ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
-                .fillMaxWidth(0.9F)
-                .fillMaxHeight(0.06F)
+                .size(335.dp,50.dp)
                 .align(Alignment.BottomCenter)
                 .offset(y = (-40).dp)
         ) {
@@ -426,8 +436,9 @@ private fun ThirdScreen(){
                 "Далее",
                 color = colorResource(id = R.color.text),
                 //fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                fontSize = 14.sp,
                 fontWeight = FontWeight(600),
+                lineHeight = 16.44.sp,
+                fontSize = 14.sp,
                 modifier = Modifier
             )
         }
