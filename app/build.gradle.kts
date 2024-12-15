@@ -51,7 +51,30 @@ android {
 
 dependencies {
 
+    implementation(libs.ktor.client.cio)
+    implementation(libs.postgrest.kt)
+    implementation(libs.okhttp)
+    implementation(libs.storage.kt)
+
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.io.github.pilgr.paperdb3)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.picasso)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.play.services.location)
+    implementation(libs.maps.mobile)
+    implementation(libs.permissionx)
+    implementation(libs.zxing.android.embedded)
+
+    //implementation(libs.maskededittext)
+    //implementation(libs.android.pdf.viewer)
+    //implementation(libs.imagepicker.support)
+    //(libs.sliding.root.nav)
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

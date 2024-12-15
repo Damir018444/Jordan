@@ -47,7 +47,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SignIn()
+            //SignIn()
+            SignUp()
         }
     }
 }
@@ -74,7 +75,7 @@ fun Start(){
             "second",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
             exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-            ) { SecondScreen()}//navController) }
+        ) { SecondScreen()}//navController) }
         composable(
             "third",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },

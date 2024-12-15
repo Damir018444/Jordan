@@ -39,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -69,6 +71,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.jan.supabase.createSupabaseClient
 import org.w3c.dom.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,10 +80,18 @@ import org.w3c.dom.Text
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
 )
 @Composable
-fun SignIn(){//navController: NavController){
+fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavController){
+
+    val context = LocalContext.current
+    val userState by viewModel.userState
+
+    var currentUserState by remember { mutableStateOf("") }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+
+
 
     Box (
         modifier = Modifier
@@ -102,7 +114,7 @@ fun SignIn(){//navController: NavController){
         ) {
             Icon(
                 painter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.back_button)),
-                contentDescription = "Описание изображения",
+                contentDescription = "Назад",
                 modifier = Modifier
                     .fillMaxSize(),
                 tint = Color.Black
@@ -137,7 +149,7 @@ fun SignIn(){//navController: NavController){
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Заполните Свои данные или продолжите через социальные медиа",
+                text = "Заполните Свои Данные Или\nПродолжите Через Социальные Медиа",
                 fontSize = 16.sp,
                 color = colorResource(id = R.color.text),
                 fontFamily = FontFamily(Font(R.font.poppins_regular)),
@@ -145,7 +157,6 @@ fun SignIn(){//navController: NavController){
                 lineHeight = 24.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(315.dp, 48.dp)
                     .align(Alignment.CenterHorizontally)
             )
 
@@ -210,7 +221,12 @@ fun SignIn(){//navController: NavController){
             BasicTextField(
                 value = email,
                 onValueChange = { email = it },
-                textStyle = TextStyle.Default.copy(fontSize = 18.sp),
+                textStyle = TextStyle.Default.copy(
+                    fontWeight = FontWeight(500),
+                    fontSize = 14.sp,
+                    lineHeight = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                ),
                 modifier = Modifier
                     .background(
                         color = colorResource(id = R.color.tf_back),
@@ -238,8 +254,9 @@ fun SignIn(){//navController: NavController){
                     visualTransformation = VisualTransformation.None,
                     interactionSource = remember { MutableInteractionSource() },
                     placeholder = { Text("xyz@gmail.com") },
-                    contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                        top = 0.dp, bottom = 0.dp
+                    contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
+                        top = 0.dp,
+                        bottom = 0.dp,
                     ),
                     shape = RoundedCornerShape(14.dp),
                     colors = colors
@@ -293,7 +310,12 @@ fun SignIn(){//navController: NavController){
             BasicTextField(
                 value = password,
                 onValueChange = { password = it },
-                textStyle = TextStyle.Default.copy(fontSize = 18.sp),
+                textStyle = TextStyle.Default.copy(
+                    fontWeight = FontWeight(500),
+                    fontSize = 14.sp,
+                    lineHeight = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                ),
                 modifier = Modifier
                     .background(
                         color = colorResource(id = R.color.tf_back),
@@ -312,16 +334,18 @@ fun SignIn(){//navController: NavController){
 
                 enabled = true,
                 singleLine = true,
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             ) {
                 TextFieldDefaults.DecorationBox(
-                    value = email,
+                    value = password,
                     innerTextField = it,
                     enabled = true,
                     singleLine = true,
                     interactionSource = remember { MutableInteractionSource() },
                     placeholder = { Text("Введите пароль") },
-                    contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                        top = 0.dp, bottom = 0.dp
+                    contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
+                        top = 0.dp,
+                        bottom = 0.dp,
                     ),
                     visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -355,8 +379,6 @@ fun SignIn(){//navController: NavController){
                     fontWeight = FontWeight(400),
                     lineHeight = 16.sp,
                     textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .wrapContentSize()
                 )
             }
 
@@ -365,7 +387,13 @@ fun SignIn(){//navController: NavController){
 
 
             Button (
-                onClick = { }, //navController.navigate("third") },
+                onClick = {
+                    viewModel.signIn(
+                        context,
+                        email,
+                        password
+                    )
+                }, //navController.navigate("third") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_back2),
                     contentColor = colorResource(id = R.color.button_back2),
@@ -385,7 +413,51 @@ fun SignIn(){//navController: NavController){
                     modifier = Modifier
                 )
             }
+
+
+            when (userState) {
+                is UserState.Loading -> {}
+
+                is UserState.Success -> {
+                    val message = (userState as UserState.Success).message
+                    currentUserState = message
+                }
+
+                is UserState.Error -> {
+                    val message = (userState as UserState.Error).message
+                    currentUserState = message
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+
+            Text (
+                text = currentUserState,
+                fontWeight = FontWeight(500),
+                fontSize = 16.sp,
+                lineHeight = 18.78.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            )
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         val annotatedString = buildAnnotatedString {
             withStyle (
