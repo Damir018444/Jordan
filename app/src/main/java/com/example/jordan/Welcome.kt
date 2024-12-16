@@ -48,7 +48,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             //SignIn()
-            SignUp()
+            //SignUp()
+            ForgotPass()
         }
     }
 }
@@ -332,7 +333,7 @@ private fun SecondScreen(){//navController: NavController){
             ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
-                .size(335.dp,50.dp)
+                .size(335.dp, 50.dp)
                 .align(Alignment.BottomCenter)
                 .offset(y = (-40).dp)
         ) {
@@ -429,7 +430,7 @@ private fun ThirdScreen(){//navController: NavController){
             ),
             shape = RoundedCornerShape(13.dp),
             modifier = Modifier
-                .size(335.dp,50.dp)
+                .size(335.dp, 50.dp)
                 .align(Alignment.BottomCenter)
                 .offset(y = (-40).dp)
         ) {

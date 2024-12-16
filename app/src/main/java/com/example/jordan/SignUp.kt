@@ -85,9 +85,6 @@ import org.w3c.dom.Text
 fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavController){
 
     val context = LocalContext.current
-    val userState by viewModel.userState
-
-    var currentUserState by remember { mutableStateOf("") }
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -153,7 +150,7 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
             Text(
                 text = "Заполните Свои Данные Или\nПродолжите Через Социальные Медиа",
                 fontSize = 16.sp,
-                color = colorResource(id = R.color.text),
+                color = colorResource(id = R.color.gray),
                 fontFamily = FontFamily(Font(R.font.poppins_regular)),
                 fontWeight = FontWeight(400),
                 lineHeight = 24.sp,
@@ -238,7 +235,15 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     singleLine = true,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = remember { MutableInteractionSource() },
-                    placeholder = { Text("xxxxxxxx") },
+                    placeholder = {
+                        Text(
+                            "xxxxxxxx",
+                            fontWeight = FontWeight(500),
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                            color = colorResource(id = R.color.tf_text)
+                        ) },
                     contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
                         top = 0.dp,
                         bottom = 0.dp,
@@ -305,7 +310,15 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     singleLine = true,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = remember { MutableInteractionSource() },
-                    placeholder = { Text("xyz@gmail.com") },
+                    placeholder = {
+                        Text(
+                            "xyz@gmail.com",
+                            fontWeight = FontWeight(500),
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                            color = colorResource(id = R.color.tf_text)
+                        ) },
                     contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
                         top = 0.dp,
                         bottom = 0.dp,
@@ -372,7 +385,15 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     enabled = true,
                     singleLine = true,
                     interactionSource = remember { MutableInteractionSource() },
-                    placeholder = { Text("********") },
+                    placeholder = {
+                        Text(
+                            "********",
+                            fontWeight = FontWeight(500),
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                            color = colorResource(id = R.color.tf_text)
+                        ) },
                     contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
                         top = 0.dp,
                         bottom = 0.dp,
@@ -444,11 +465,11 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
 
             Spacer(Modifier.height(12.dp))
 
-
             Button (
                 onClick = {
                     viewModel.signUp(
                         context,
+                        name,
                         email,
                         password
                     )
@@ -472,36 +493,6 @@ fun SignUp(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     modifier = Modifier
                 )
             }
-
-
-            when (userState) {
-                is UserState.Loading -> {}
-
-                is UserState.Success -> {
-                    val message = (userState as UserState.Success).message
-                    currentUserState = message
-                }
-
-                is UserState.Error -> {
-                    val message = (userState as UserState.Error).message
-                    currentUserState = message
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-
-            Text (
-                text = currentUserState,
-                fontWeight = FontWeight(500),
-                fontSize = 12.5.sp,
-                lineHeight = 18.78.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
-            )
         }
 
 
