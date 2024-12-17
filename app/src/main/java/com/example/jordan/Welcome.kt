@@ -49,7 +49,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             //SignIn()
             //SignUp()
-            ForgotPass()
+            //ForgotPass()
+            OTPcheck()
         }
     }
 }

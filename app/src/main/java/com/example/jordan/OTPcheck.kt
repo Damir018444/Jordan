@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -49,8 +52,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -59,6 +65,8 @@ import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -68,6 +76,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -86,21 +95,16 @@ import org.w3c.dom.Text
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
 )
 @Composable
-fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: NavController){
+fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: NavController){
 
-    var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var email by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf("") }
+    val textFieldRequester = remember { FocusRequester() }
 
     Box (
         modifier = Modifier
             .background(colorResource(id = R.color.white))
             .fillMaxSize()
-            .then(if (showDialog) Modifier
-                .blur(
-                    4.dp,
-                    edgeTreatment = BlurredEdgeTreatment.Unbounded
-                ) else Modifier)
     ) {
 
         Button(
@@ -138,7 +142,7 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
         ) {
 
             Text(
-                text = "Забыл пароль",
+                text = "OTP проверка",
                 fontSize = 32.sp,
                 color = colorResource(id = R.color.text),
                 fontFamily = FontFamily(Font(R.font.raleway_regular)),
@@ -146,7 +150,7 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
                 lineHeight = 37.57.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(227.dp, 38.dp)
+                    .size(228.dp, 38.dp)
                     .align(Alignment.CenterHorizontally)
 
             )
@@ -154,7 +158,7 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Введите Свою Учетную Запись\nДля Сброса",
+                text = "Пожалуйста, Проверьте Свою\nЭлектронную Почту, Чтобы Увидеть\nКод Подтверждения",
                 fontSize = 16.sp,
                 color = colorResource(id = R.color.gray),
                 fontFamily = FontFamily(Font(R.font.poppins_regular)),
@@ -162,13 +166,28 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
                 lineHeight = 24.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(315.dp,48.dp)
+                    .size(315.dp, 72.dp)
                     .align(Alignment.CenterHorizontally)
             )
 
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(16.dp))
 
+
+            Text(
+                text = "OTP Код",
+                fontWeight = FontWeight(600),
+                fontSize = 21.sp,
+                lineHeight = 24.65.sp,
+                color = colorResource(id = R.color.text),
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .size(85.dp, 25.dp)
+                    .align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             val colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = colorResource(id = R.color.tf_back),
@@ -187,65 +206,58 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
                 unfocusedBorderColor = Color.Transparent
             )
 
-            BasicTextField(
-                value = email,
-                onValueChange = { email = it },
-                textStyle = TextStyle.Default.copy(
-                    fontWeight = FontWeight(500),
-                    fontSize = 14.sp,
-                    lineHeight = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                ),
-                modifier = Modifier
-                    .background(
-                        color = colorResource(id = R.color.tf_back),
-                        shape = RoundedCornerShape(14.dp)
-                    )
-                    .indicatorLine(
-                        enabled = false,
-                        isError = false,
-                        interactionSource = remember { MutableInteractionSource() },
-                        colors = OutlinedTextFieldDefaults.colors(),
-                        focusedIndicatorLineThickness = 0.dp,
-                        unfocusedIndicatorLineThickness = 0.dp
-                    )
-                    .size(335.dp, 48.dp)
-                    .align(Alignment.Start),
 
-                enabled = true,
-                singleLine = true
+            val keyboardController = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+
+            BasicTextField(
+                value = value,
+                onValueChange = {
+                    if(it.length <= 6) value = it
+                },
+                modifier = Modifier
+                    //.background(Color.Red)
             ) {
-                TextFieldDefaults.DecorationBox(
-                    value = email,
-                    innerTextField = it,
-                    enabled = true,
-                    singleLine = true,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = remember { MutableInteractionSource() },
-                    placeholder = {
-                        Text(
-                            "xyz@gmail.com",
-                            fontWeight = FontWeight(500),
-                            fontSize = 14.sp,
-                            lineHeight = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                            color = colorResource(id = R.color.tf_text)
-                        ) },
-                    contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
-                        top = 0.dp,
-                        bottom = 0.dp,
-                    ),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = colors
-                )
+
+                Row (
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    repeat(6){ index ->
+                        val number = when {
+                            index >= value.length -> ""
+                            else -> value[index]
+                        }
+
+                        Box (
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(46.dp, 99.dp)
+                                .background(
+                                    color = colorResource(id = R.color.tf_back),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                        ) {
+                            Text (
+                                text = number.toString(),
+                                fontWeight = FontWeight(600),
+                                fontSize = 18.sp,
+                                lineHeight = 24.sp,
+                                fontFamily = FontFamily(Font(R.font.poppins_regular)),
+                                color = colorResource(id = R.color.text),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
             }
 
 
-            Spacer(Modifier.height(40.dp))
+
+            Spacer(Modifier.height(25.dp))
 
 
             Button (
-                onClick = { showDialog = true }, //navController.navigate("third") },
+                onClick = {  }, //navController.navigate("third") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_back2),
                     contentColor = colorResource(id = R.color.button_back2),
@@ -266,80 +278,6 @@ fun ForgotPass(viewModel: SupabaseAuthViewModel = viewModel()){ //navController:
                 )
             }
         }
-        if (showDialog) {
-            ShowDialog(onDismissRequest = { showDialog = false })
-        }
     }
 }
 
-
-/*@Preview(showBackground = false, showSystemUi = false,
-    device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)*/
-@Composable
-fun ShowDialog(onDismissRequest: () -> Unit){
-    Box(
-        modifier = Modifier
-            .offset(y = 295.dp)
-    ){
-        Dialog(onDismissRequest = onDismissRequest) {
-            Box(
-                modifier = Modifier
-                    .size(335.dp, 196.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(color = colorResource(id = R.color.white)),
-            ){
-                Column (
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Box (
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                color = colorResource(id = R.color.button_back2),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.email)),
-                            contentDescription = "?",
-                            tint = colorResource(id = R.color.ic_email)
-                        )
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    Text(
-                        text = "Проверьте Ваш Email",
-                        fontWeight = FontWeight(700),
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        color = colorResource(id = R.color.text),
-                        fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .size(315.dp,20.dp)
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-
-                    Text(
-                        text = "Мы Отправили Код Восстановления\nПароля На Вашу Электронную Почту.",
-                        fontWeight = FontWeight(400),
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        color = colorResource(id = R.color.gray),
-                        fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .size(315.dp,40.dp)
-                    )
-                }
-            }
-        }
-    }
-}

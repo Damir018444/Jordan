@@ -10,6 +10,7 @@ import com.example.jordan.SupabaseClient.supabase
 import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
+import io.github.jan.supabase.gotrue.providers.builtin.OTP
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
@@ -77,15 +78,56 @@ class SupabaseAuthViewModel: ViewModel() {
 
 
 
-    fun signOut(){
+    fun getOTP(userEmail: String): Int {
+        var code = 111111
         viewModelScope.launch {
             try {
-                supabase.auth.signOut()
-                Log.w("SIGN_OUT", "Signed Out Successfully!")
+                supabase.auth.signInWith(OTP) {
+                    email = userEmail
+                    createUser = false
+                }
+
             } catch (e: Exception){
                 Log.e("SIGN_OUT", "Error has appeared: ${e.message}")
             }
         }
+        return 0
+    }
+
+
+
+    fun signOut(): Int {
+        var code = 0
+        viewModelScope.launch {
+            try {
+                supabase.auth.signOut()
+                supabase.auth.sessionStatus.collect{ status ->
+                    when(status){
+                        is SessionStatus.Authenticated -> {
+                            Log.e("SIGN_IN", "Authenticated")
+                            code = -1
+                        }
+                        is SessionStatus.LoadingFromStorage -> {
+                            Log.e("SIGN_IN", "LoadingFromStorage")
+                            code = -1
+                        }
+                        is SessionStatus.NetworkError -> {
+                            Log.e("SIGN_IN", "NetworkError")
+                            code = -1
+                        }
+                        is SessionStatus.NotAuthenticated -> {
+                            Log.e("SIGN_IN", "NotAuthenticated")
+                            code = 1
+                        } else -> {
+                            code = -1
+                        }
+                    }
+                }
+            } catch (e: Exception){
+                Log.e("SIGN_OUT", "Error has appeared: ${e.message}")
+            }
+        }
+        return code
     }
 
 
@@ -108,6 +150,12 @@ class SupabaseAuthViewModel: ViewModel() {
             }
         }
     }
+
+
+
+
+
+
 
 
 
