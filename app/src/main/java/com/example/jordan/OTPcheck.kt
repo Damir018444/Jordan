@@ -1,105 +1,84 @@
 package com.example.jordan
 
-import android.graphics.drawable.VectorDrawable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.github.jan.supabase.createSupabaseClient
-import org.w3c.dom.Text
+import androidx.navigation.NavController
+import kotlinx.coroutines.delay
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: NavController){
+fun OTPcheck(navController: NavController, email: String){
+
+    val viewModel: SupabaseAuthViewModel = viewModel()
+
+    var value by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    var value by remember { mutableStateOf("") }
-    val textFieldRequester = remember { FocusRequester() }
+
+    var errorText by remember { mutableStateOf("") }
+
+    var timeLeft by remember { mutableIntStateOf(60) }
+    var isRunning by remember { mutableStateOf(true) }
+
+    LaunchedEffect(isRunning) {
+        if (isRunning && timeLeft > 0) {
+            while (timeLeft > 0) {
+                delay(1000)
+                timeLeft -= 1
+            }
+            isRunning = false
+        }
+    }
+
+
 
     Box (
         modifier = Modifier
@@ -108,7 +87,7 @@ fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: N
     ) {
 
         Button(
-            onClick = {}, //navController.navigate("first2") }
+            onClick = { navController.navigate("recovery") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),
@@ -135,7 +114,8 @@ fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: N
 
 
         Column (
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = 121.dp)
@@ -181,30 +161,15 @@ fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: N
                 lineHeight = 24.65.sp,
                 color = colorResource(id = R.color.text),
                 fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 modifier = Modifier
-                    .size(85.dp, 25.dp)
+                    //.size(85.dp, 25.dp)
+                    .padding(start = 34.dp)
                     .align(Alignment.Start)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            val colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = colorResource(id = R.color.tf_back),
-                focusedContainerColor = colorResource(id = R.color.tf_back),
-
-                focusedTextColor = colorResource(id = R.color.tf_text),
-                unfocusedTextColor = colorResource(id = R.color.tf_text),
-
-                focusedPlaceholderColor = colorResource(id = R.color.tf_placeholder),
-                unfocusedPlaceholderColor = colorResource(id = R.color.tf_placeholder),
-
-                focusedLabelColor = colorResource(id = R.color.text),
-                unfocusedLabelColor = colorResource(id = R.color.text),
-
-                focusedBorderColor = Color.Transparent,
-                unfocusedBorderColor = Color.Transparent
-            )
 
 
             val keyboardController = LocalSoftwareKeyboardController.current
@@ -213,12 +178,27 @@ fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: N
             BasicTextField(
                 value = value,
                 onValueChange = {
-                    if(it.length <= 6) value = it
+                    if(it.length <= 6) {
+                        value = it
+                        if(it.length == 6){
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            viewModel.checkOTP(context, email, value) { code ->
+                                errorText = when (code) {
+                                    1 -> "Успешно" //navController.navigate("home") },
+                                    -1 -> "Какая-та ошибка"
+                                    -11 -> "Ошибка сети"
+                                    -111 -> "Не авторизован"
+                                    else -> "Какая-та ошибка"
+                                }
+                            }
+                        }
+                    } else {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
                 },
-                modifier = Modifier
-                    //.background(Color.Red)
             ) {
-
                 Row (
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -253,31 +233,70 @@ fun OTPcheck(viewModel: SupabaseAuthViewModel = viewModel()){ //navController: N
 
 
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(22.dp))
 
 
-            Button (
-                onClick = {  }, //navController.navigate("third") },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button_back2),
-                    contentColor = colorResource(id = R.color.button_back2),
-                ),
-                shape = RoundedCornerShape(13.dp),
+
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .size(335.dp, 50.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .padding(start = 24.dp, end = 24.dp)
             ) {
                 Text (
-                    "Отправить",
-                    color = colorResource(id = R.color.button_text2),
-                    //fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                    fontWeight = FontWeight(600),
-                    lineHeight = 22.sp,
-                    fontSize = 14.sp,
+                    text = "Отправить заново",
+                    fontWeight = FontWeight(400),
+                    fontSize = 12.sp,
+                    lineHeight = 14.09.sp,
+                    fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                    color = colorResource(id = R.color.another_gray),
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
+                        .weight(1F)
+                )
+
+                Text (
+                    text = formatTime(timeLeft),
+                    fontWeight = FontWeight(400),
+                    fontSize = 12.sp,
+                    lineHeight = 14.09.sp,
+                    fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                    color = colorResource(id = R.color.another_gray),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .weight(1F)
                 )
             }
+
+
+
+
+            Spacer(modifier = Modifier.height(35.dp))
+
+            val color = if(errorText == "Успешно") Color.Green
+            else Color.Red
+
+            Text (
+                text = errorText,
+                fontSize = 14.sp,
+                color = color,
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                fontWeight = FontWeight(500),
+                lineHeight = 24.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(300.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
         }
     }
+}
+
+
+
+
+fun formatTime(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return String.format(Locale.getDefault(),"%02d:%02d", minutes, remainingSeconds)
 }
 

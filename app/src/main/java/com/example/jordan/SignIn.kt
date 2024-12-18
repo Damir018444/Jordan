@@ -1,6 +1,7 @@
 package com.example.jordan
 
 import android.graphics.drawable.VectorDrawable
+import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,23 +74,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import io.github.jan.supabase.createSupabaseClient
+import okhttp3.internal.wait
 import org.w3c.dom.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavController){
+fun SignIn(navController: NavController){
+
+    val viewModel: SupabaseAuthViewModel = viewModel()
 
     val context = LocalContext.current
+
+    var isPressed by remember { mutableStateOf(false) }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-
+    var errorText by remember { mutableStateOf("") }
 
     Box (
         modifier = Modifier
@@ -97,7 +105,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
     ) {
 
         Button(
-            onClick = {}, //navController.navigate("first2") }
+            onClick = { navController.navigate("first") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),
@@ -176,7 +184,6 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                 lineHeight = 20.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(42.dp, 20.dp)
                     .align(Alignment.Start)
             )
 
@@ -202,19 +209,6 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
             )
 
 
-
-            /*TextField (
-                value = email,
-                onValueChange = { email = it },
-                placeholder = { Text("xyz@gmail.com") },
-                singleLine = true,
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier
-                    .size(335.dp, 48.dp)
-                    .align(Alignment.Start),
-                colors = colors
-            )*/
-
             BasicTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -222,6 +216,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     fontWeight = FontWeight(500),
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
+                    color = colorResource(id = R.color.tf_text),
                     fontFamily = FontFamily(Font(R.font.poppins_regular)),
                 ),
                 modifier = Modifier
@@ -257,7 +252,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                             fontSize = 14.sp,
                             lineHeight = 16.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                            color = colorResource(id = R.color.tf_text)
+                            color = colorResource(id = R.color.tf_placeholder)
                         ) },
                     contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
                         top = 0.dp,
@@ -281,35 +276,11 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                 lineHeight = 20.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(58.dp, 29.dp)
                     .align(Alignment.Start),
             )
 
 
             Spacer(Modifier.height(12.dp))
-
-
-            /*TextField (
-                value = password,
-                onValueChange = { password = it },
-                placeholder = { Text("Введите пароль") },
-                singleLine = true,
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton (onClick = { isPasswordVisible = !isPasswordVisible }) {
-                        Icon(
-                            painter = if (isPasswordVisible) rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.eye))
-                            else rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.crossed_eye)),
-                            contentDescription = if (isPasswordVisible) "Скрыть пароль" else "Показать пароль"
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier
-                    .size(335.dp, 48.dp)
-                    .align(Alignment.Start),
-                colors = colors
-            )*/
 
 
             BasicTextField(
@@ -319,6 +290,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                     fontWeight = FontWeight(500),
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
+                    color = colorResource(id = R.color.tf_text),
                     fontFamily = FontFamily(Font(R.font.poppins_regular)),
                 ),
                 modifier = Modifier
@@ -354,7 +326,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                             fontSize = 14.sp,
                             lineHeight = 16.sp,
                             fontFamily = FontFamily(Font(R.font.poppins_regular)),
-                            color = colorResource(id = R.color.tf_text)
+                            color = colorResource(id = R.color.tf_placeholder)
                         ) },
                     contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
                         top = 0.dp,
@@ -380,7 +352,7 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
 
 
             TextButton (
-                onClick = {  },
+                onClick = { navController.navigate("recovery") },
                 modifier = Modifier
                     .align(Alignment.End)
             ) {
@@ -401,12 +373,24 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
 
             Button (
                 onClick = {
-                    viewModel.signIn(
-                        context,
-                        email,
-                        password
-                    )
-                }, //navController.navigate("third") },
+                    if(isPressed) return@Button
+                    isPressed = true
+                    if(Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        if(password.isNotEmpty() and password.isNotBlank() and (password.length >= 8)) {
+                            viewModel.signIn(context, email, password) { code ->
+                                errorText = when (code) {
+                                    1 -> "Успешно" //navController.navigate("home")
+                                    -1 -> "Какая-то ошибка"
+                                    -11 -> "Ошибка сети"
+                                    -111 -> "Не авторизован"
+                                    else -> "Какая-то ошибка"
+                                }
+                                isPressed = false
+                            }
+                        } else errorText = "Введите пароль от аккаунта!"
+                    } else errorText = "Введите действительный адрес эл. почты!"
+                    isPressed = false
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_back2),
                     contentColor = colorResource(id = R.color.button_back2),
@@ -419,13 +403,33 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
                 Text (
                     "Войти",
                     color = colorResource(id = R.color.button_text2),
-                    //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                    fontFamily = FontFamily(Font(R.font.raleway_regular)),
                     fontWeight = FontWeight(600),
                     lineHeight = 22.sp,
                     fontSize = 14.sp,
                     modifier = Modifier
                 )
             }
+
+
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            val color = if(errorText == "Успешно") Color.Green
+                        else Color.Red
+
+            Text(
+                text = errorText,
+                fontSize = 14.sp,
+                color = color,
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                fontWeight = FontWeight(500),
+                lineHeight = 24.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(300.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
         }
 
 
@@ -469,12 +473,12 @@ fun SignIn(viewModel: SupabaseAuthViewModel = viewModel()){//navController: NavC
             fontSize = 16.sp,
             lineHeight = 18.78.sp,
             textAlign = TextAlign.Center,
-            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontFamily = FontFamily(Font(R.font.raleway_regular)),
             modifier = Modifier
                 .offset(y = 746.dp)
                 .align(Alignment.TopCenter)
                 .clickable {
-                    //navController.navigate("first2") },
+                    navController.navigate("signup")
                 }
         )
     }

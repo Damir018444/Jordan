@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jordan.SupabaseClient.supabase
+import io.github.jan.supabase.gotrue.OtpType
 import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class SupabaseAuthViewModel: ViewModel() {
 
-    fun signUp(context: Context, name: String, userEmail: String, userPass: String) {
+    fun signUp(context: Context, name: String, userEmail: String, userPass: String, callback: (Int) -> Unit) {
         viewModelScope.launch {
             try {
                 supabase.auth.signUpWith(Email) {
@@ -32,22 +33,24 @@ class SupabaseAuthViewModel: ViewModel() {
                             saveToken(context)
                             insertData(status.session.user?.id ?: "", name)
                             Log.w("SIGN_UP", "Registered Successfully!")
+                            callback(1)
                         }
 
-                        is SessionStatus.LoadingFromStorage -> Log.e("SIGN_UP", "LoadingFromStorage")
-                        is SessionStatus.NetworkError -> Log.e("SIGN_UP", "NetworkError")
-                        is SessionStatus.NotAuthenticated -> Log.e("SIGN_UP", "NotAuthenticated")
+                        is SessionStatus.LoadingFromStorage -> { Log.e("SIGN_UP", "LoadingFromStorage"); callback(-1) }
+                        is SessionStatus.NetworkError -> { Log.e("SIGN_UP", "NetworkError"); callback(-11) }
+                        is SessionStatus.NotAuthenticated -> { Log.e("SIGN_UP", "NotAuthenticated"); callback(-111) }
                     }
                 }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.e("SIGN_UP", "Error has appeared: ${e.message}")
+                callback(-1)
             }
         }
     }
 
 
 
-    fun signIn(context: Context, userEmail: String, userPass: String) {
+    fun signIn(context: Context, userEmail: String, userPass: String, callback: (Int) -> Unit) {
         viewModelScope.launch {
             try {
                 supabase.auth.signInWith(Email) {
@@ -59,27 +62,25 @@ class SupabaseAuthViewModel: ViewModel() {
                     when(status){
                         is SessionStatus.Authenticated -> {
                             saveToken(context)
-                            Log.w("SIGN_UP", "Logged Successfully!")
+                            Log.w("SIGN_IN", "Logged Successfully!")
+                            callback(1)
                         }
 
-                        is SessionStatus.LoadingFromStorage -> Log.e("SIGN_IN", "LoadingFromStorage")
-                        is SessionStatus.NetworkError -> Log.e("SIGN_IN", "NetworkError")
-                        is SessionStatus.NotAuthenticated -> Log.e("SIGN_IN", "NotAuthenticated")
+                        is SessionStatus.LoadingFromStorage -> { Log.e("SIGN_IN", "LoadingFromStorage"); callback(-1) }
+                        is SessionStatus.NetworkError -> { Log.e("SIGN_IN", "NetworkError"); callback(-11) }
+                        is SessionStatus.NotAuthenticated -> { Log.e("SIGN_IN", "NotAuthenticated"); callback(-111) }
                     }
                 }
-
-
-
             } catch (e: Exception){
                 Log.e("SIGN_IN", "Error has appeared: ${e.message}")
+                callback(-1)
             }
         }
     }
 
 
 
-    fun getOTP(userEmail: String): Int {
-        var code = 111111
+    fun getOTP(userEmail: String, callback: (Int) -> Unit) {
         viewModelScope.launch {
             try {
                 supabase.auth.signInWith(OTP) {
@@ -87,48 +88,77 @@ class SupabaseAuthViewModel: ViewModel() {
                     createUser = false
                 }
 
+                callback(1)
             } catch (e: Exception){
-                Log.e("SIGN_OUT", "Error has appeared: ${e.message}")
+                Log.e("GET_OTP", "Error has appeared: ${e.message}")
+                callback(-1)
             }
         }
-        return 0
+    }
+
+
+    fun checkOTP(context: Context, userEmail: String, code: String, callback: (Int) -> Unit) {
+        viewModelScope.launch {
+            try {
+                supabase.auth.verifyEmailOtp(
+                    type = OtpType.Email.EMAIL,
+                    email = userEmail,
+                    token = code
+                )
+
+                supabase.auth.sessionStatus.collect{ status ->
+                    when(status){
+                        is SessionStatus.Authenticated -> {
+                            saveToken(context)
+                            Log.w("SIGN_IN", "Logged Successfully!")
+                            callback(1)
+                        }
+
+                        is SessionStatus.LoadingFromStorage -> { Log.e("CHECK_OTP", "LoadingFromStorage"); callback(-1) }
+                        is SessionStatus.NetworkError -> { Log.e("CHECK_OTP", "NetworkError"); callback(-11) }
+                        is SessionStatus.NotAuthenticated -> { Log.e("CHECK_OTP", "NotAuthenticated"); callback(-111) }
+                    }
+                }
+            } catch (e: Exception){
+                Log.e("CHECK_OTP", "Error has appeared: ${e.message}")
+                callback(-1)
+            }
+        }
     }
 
 
 
-    fun signOut(): Int {
-        var code = 0
+
+
+
+
+    fun signOut(callback: (Int) -> Unit) {
         viewModelScope.launch {
             try {
                 supabase.auth.signOut()
                 supabase.auth.sessionStatus.collect{ status ->
                     when(status){
-                        is SessionStatus.Authenticated -> {
-                            Log.e("SIGN_IN", "Authenticated")
-                            code = -1
-                        }
-                        is SessionStatus.LoadingFromStorage -> {
-                            Log.e("SIGN_IN", "LoadingFromStorage")
-                            code = -1
-                        }
-                        is SessionStatus.NetworkError -> {
-                            Log.e("SIGN_IN", "NetworkError")
-                            code = -1
-                        }
+                        is SessionStatus.Authenticated -> { Log.e("CHECK_OTP", "Authenticated"); callback(-111) }
+                        is SessionStatus.NetworkError -> { Log.e("CHECK_OTP", "NetworkError"); callback(-11) }
+                        is SessionStatus.LoadingFromStorage -> { Log.e("CHECK_OTP", "LoadingFromStorage"); callback(-1) }
+
                         is SessionStatus.NotAuthenticated -> {
-                            Log.e("SIGN_IN", "NotAuthenticated")
-                            code = 1
-                        } else -> {
-                            code = -1
+                            Log.w("CHECK_OTP", "NotAuthenticated");
+                            callback(1)
                         }
                     }
                 }
             } catch (e: Exception){
                 Log.e("SIGN_OUT", "Error has appeared: ${e.message}")
+                callback(-1)
             }
         }
-        return code
     }
+
+
+
+
+
 
 
 
@@ -168,6 +198,7 @@ class SupabaseAuthViewModel: ViewModel() {
             try {
                 val data = mapOf("auth_id" to authId, "name" to name)
                 supabase.postgrest.from("jordan").insert(data)
+                Log.e("INSERT_DATA", "Data Inserted Successfully!")
             } catch (e: Exception) {
                 Log.e("INSERT_DATA", "Error has appeared: ${e.message}")
             }
@@ -176,8 +207,12 @@ class SupabaseAuthViewModel: ViewModel() {
 
     fun updateData(name: String){
         viewModelScope.launch {
-            val authId = supabase.auth.currentUserOrNull()?.id ?: ""
-            supabase.postgrest.from("jordan").insert(listOf(authId, name))
+            try {
+                val authId = supabase.auth.currentUserOrNull()?.id ?: ""
+                supabase.postgrest.from("jordan").insert(listOf(authId, name))
+            } catch (e: Exception) {
+                Log.e("UPDATE_DATA", "Error has appeared: ${e.message}")
+            }
         }
     }
 
@@ -202,6 +237,7 @@ class SupabaseAuthViewModel: ViewModel() {
             sharedPref.saveStringData("accessToken", accessToken)
             sharedPref.saveStringData("authId", authId)
             Log.e("USER_ID", authId)
+            Log.e("ACCESS_TOKEN", accessToken)
         }
     }
 

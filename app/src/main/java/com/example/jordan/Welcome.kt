@@ -47,10 +47,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            Start()
             //SignIn()
             //SignUp()
             //ForgotPass()
-            OTPcheck()
+            //OTPcheck()
         }
     }
 }
@@ -67,27 +68,40 @@ fun Start(){
             "first",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
             exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
-        ) { FirstScreen()}//navController) }
-        composable(
-            "first2",
-            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-        ) { FirstScreen()}//navController) }
+        ) { FirstScreen(navController) }
         composable(
             "second",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
             exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-        ) { SecondScreen()}//navController) }
+        ) { SecondScreen(navController) }
         composable(
             "third",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
             exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-        ) { ThirdScreen()}//navController) }
+        ) { ThirdScreen(navController) }
         composable(
             "signin",
             enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
             exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-        ) { SignIn() }//navController) }
+        ) { SignIn(navController) }
+        composable(
+            "signup",
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+        ) { SignUp(navController) }
+        composable(
+            "recovery",
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+        ) { ForgotPass(navController) }
+        composable(
+            "recovery2/{email}",
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email")
+            OTPcheck(navController, email!!)
+        }
     }
 }
 
@@ -140,7 +154,7 @@ fun SplashScreen(navController: NavController){
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
 )*/
 @Composable
-private fun FirstScreen(){//navController: NavController){
+private fun FirstScreen(navController: NavController){
     Box (
         modifier = Modifier
             .background(
@@ -220,7 +234,7 @@ private fun FirstScreen(){//navController: NavController){
 
 
         Button (
-            onClick = { },//navController.navigate("second") },
+            onClick = { navController.navigate("second") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),
@@ -254,11 +268,11 @@ private fun FirstScreen(){//navController: NavController){
 
 
 
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-private fun SecondScreen(){//navController: NavController){
+private fun SecondScreen(navController: NavController){
     Box (
         modifier = Modifier
             .background(
@@ -327,7 +341,7 @@ private fun SecondScreen(){//navController: NavController){
 
 
         Button (
-            onClick = { }, //navController.navigate("third") },
+            onClick = { navController.navigate("third") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),
@@ -359,7 +373,7 @@ private fun SecondScreen(){//navController: NavController){
 
 //@Preview(showBackground = true, showSystemUi = false)
 @Composable
-private fun ThirdScreen(){//navController: NavController){
+private fun ThirdScreen(navController: NavController){
     Box (
         modifier = Modifier
             .background(
@@ -424,7 +438,7 @@ private fun ThirdScreen(){//navController: NavController){
 
 
         Button (
-            onClick = { }, //navController.navigate("signin") },
+            onClick = { navController.navigate("signin") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),
