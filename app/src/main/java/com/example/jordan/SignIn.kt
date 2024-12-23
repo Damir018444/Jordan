@@ -477,7 +477,10 @@ fun SignIn(navController: NavController){
             modifier = Modifier
                 .offset(y = 746.dp)
                 .align(Alignment.TopCenter)
-                .clickable {
+                .clickable (
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
                     navController.navigate("signup")
                 }
         )

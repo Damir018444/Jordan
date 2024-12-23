@@ -5,6 +5,8 @@
     <color name="gradient2">#0076B1</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="white2">#F7F7F9</color>
+
     <color name="text">#2B2B2B</color>
 
     <color name="gray">#707B81</color>
@@ -24,7 +26,14 @@
 
 
 
+    <color name="bottomnav_icon_selected">#48B2E7</color>
+    <color name="bottomnav_icon_unselected">#707B81</color>
 
+
+    <color name="drop_shadow">#00000026</color>
+
+
+    <color name="pastel_red">#F87265</color>
 
 
     <color name="ic_email">#FFF8F8</color>

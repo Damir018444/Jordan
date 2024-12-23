@@ -47,11 +47,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Start()
+            //PathTest()
+
+            //Start()
             //SignIn()
             //SignUp()
             //ForgotPass()
             //OTPcheck()
+
+            //Home()
+
+            ScreensNavController()
         }
     }
 }
