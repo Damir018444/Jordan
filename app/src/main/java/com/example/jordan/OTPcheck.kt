@@ -104,7 +104,7 @@ fun OTPcheck(navController: NavController, email: String){
                 contentDescription = "Назад",
                 modifier = Modifier
                     .fillMaxSize(),
-                tint = Color.Black
+                tint = colorResource(id = R.color.black)
             )
         }
 

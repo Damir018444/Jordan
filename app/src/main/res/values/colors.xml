@@ -8,6 +8,7 @@
     <color name="white2">#F7F7F9</color>
 
     <color name="text">#2B2B2B</color>
+    <color name="black">#2B2B2B</color>
 
     <color name="gray">#707B81</color>
     <color name="another_gray">#7D848D</color>
@@ -24,6 +25,7 @@
     <color name="tf_text">#2B2B2B</color>
 
 
+    <color name="hyperlink_text">#48B2E7</color>
 
 
     <color name="bottomnav_icon_selected">#48B2E7</color>

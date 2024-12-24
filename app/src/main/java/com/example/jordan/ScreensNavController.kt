@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
@@ -125,6 +126,9 @@ fun ScreensNavController(){//navController: NavController){
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
 
+    val navigationViewModel: NavHostViewModel = viewModel()
+    val navController = navigationViewModel.navController.value
+
     Box (
         modifier = Modifier
             .fillMaxSize()
@@ -133,10 +137,10 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
 
 
         when(selectedIndex){
-            0 -> { Home() }
-            1 -> {}
-            2 -> {}
-            3 -> {}
+            0 -> { navController?.navigate("home") } //Home()
+            1 -> { navController?.navigate("favourites") }
+            2 -> { navController?.navigate("notifications") }
+            3 -> { navController?.navigate("profile") }
         }
 
 

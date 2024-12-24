@@ -91,6 +91,8 @@ fun SignUp(navController: NavController){
 
     val context = LocalContext.current
 
+    var consentAccepted by remember { mutableStateOf(false) }
+
     var isPressed by remember { mutableStateOf(false) }
 
     var name by remember { mutableStateOf("") }
@@ -124,7 +126,7 @@ fun SignUp(navController: NavController){
                 contentDescription = "Назад",
                 modifier = Modifier
                     .fillMaxSize(),
-                tint = Color.Black
+                tint = colorResource(id = R.color.black)
             )
         }
 
@@ -434,38 +436,47 @@ fun SignUp(navController: NavController){
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Box (
                     modifier = Modifier
                         .size(18.dp)
                         .background(
                             color = colorResource(id = R.color.button_back1),
                             shape = RoundedCornerShape(6.dp)
+                        )
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { consentAccepted = !consentAccepted }
                         ),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.shield)),
-                        contentDescription = "?",
-                        modifier = Modifier
-                            .size(9.dp,9.dp)
-                    )
+                    if (consentAccepted) {
+                        Icon(
+                            painter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.shield)),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(9.dp, 9.dp)
+                        )
+                    }
                 }
 
-                TextButton (
-                    onClick = {  },
-                ) {
-                    Text(
-                        text = "Даю согласие на обработку\nперсональных данных",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight(500),
-                        lineHeight = 18.78.sp,
-                        color = colorResource(id = R.color.gray),
-                        fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                        textAlign = TextAlign.Start,
-                        textDecoration = TextDecoration.Underline
-                    )
-                }
+
+                Text(
+                    text = "Даю согласие на обработку\nперсональных данных",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(500),
+                    lineHeight = 18.78.sp,
+                    color = colorResource(id = R.color.gray),
+                    fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                    textAlign = TextAlign.Start,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier
+                        .clickable (
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = {  }
+                        )
+                )
             }
 
 
@@ -480,20 +491,22 @@ fun SignUp(navController: NavController){
                     if(isPressed) return@Button
                     isPressed = true
                     if(Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                        if(name.isNotEmpty() and name.isNotBlank()) {
-                            if(password.isNotEmpty() and password.isNotBlank() and (password.length >= 8)) {
-                                viewModel.signUp(context, name, email, password) { code ->
-                                    errorText = when (code) {
-                                        1 -> "Успешно" //navController.navigate("home")
-                                        -1 -> "Какая-то ошибка"
-                                        -11 -> "Ошибка сети"
-                                        -111 -> "Не авторизован"
-                                        else -> "Какая-то ошибка"
+                        if(consentAccepted) {
+                            if (name.isNotEmpty() and name.isNotBlank()) {
+                                if (password.isNotEmpty() and password.isNotBlank() and (password.length >= 8)) {
+                                    viewModel.signUp(context, name, email, password) { code ->
+                                        errorText = when (code) {
+                                            1 -> "Успешно" //navController.navigate("home")
+                                            -1 -> "Какая-то ошибка"
+                                            -11 -> "Ошибка сети"
+                                            -111 -> "Не авторизован"
+                                            else -> "Какая-то ошибка"
+                                        }
+                                        isPressed = false
                                     }
-                                    isPressed = false
-                                }
-                            } else errorText = "Пароль не должен быть пустым и его длина должна быть больше 7-ми символов!"
-                        } else errorText = "Имя не должно быть пустым!"
+                                } else errorText = "Пароль не должен быть пустым и его длина должна быть больше 7-ми символов!"
+                            } else errorText = "Имя не должно быть пустым!"
+                        } else errorText = "Примите согласие на обработку персональных данных!"
                     } else errorText = "Введите действительный адрес эл. почты!"
                     isPressed = false
                 },

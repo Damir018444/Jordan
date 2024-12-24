@@ -122,7 +122,7 @@ fun SignIn(navController: NavController){
                 contentDescription = "Назад",
                 modifier = Modifier
                     .fillMaxSize(),
-                tint = Color.Black
+                tint = colorResource(id = R.color.black)
             )
         }
 

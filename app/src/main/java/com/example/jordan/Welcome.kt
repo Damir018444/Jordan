@@ -31,11 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,10 +46,17 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var navigationViewModel: NavHostViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        navigationViewModel = ViewModelProvider(this).get(NavHostViewModel::class.java)
+
         enableEdgeToEdge()
         setContent {
+
             //PathTest()
 
             //Start()
@@ -57,14 +67,155 @@ class MainActivity : ComponentActivity() {
 
             //Home()
 
-            ScreensNavController()
+            //ScreensNavController()
+
+
+
+
+
+
+            val navController = rememberNavController()
+            navigationViewModel.navController.value = navController
+
+            NavHost(navController = navController, startDestination = "splash") {
+                composable("splash") { SplashScreen(navController) }
+
+                //REGISTRATION/AUTHENTICATION
+                composable(
+                    "first",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                ) { FirstScreen(navController) }
+                composable(
+                    "second",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SecondScreen(navController) }
+                composable(
+                    "third",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { ThirdScreen(navController) }
+                composable(
+                    "signin",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SignIn(navController) }
+                composable(
+                    "signup",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SignUp(navController) }
+                composable(
+                    "recovery",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { ForgotPass(navController) }
+                composable(
+                    "recovery2/{email}",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { backStackEntry ->
+                    val email = backStackEntry.arguments?.getString("email")
+                    OTPcheck(navController, email!!)
+                }
+
+
+
+
+
+                //HOME/CART/ORDERS
+                composable(
+                    "first",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                ) { FirstScreen(navController) }
+                composable(
+                    "second",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SecondScreen(navController) }
+                composable(
+                    "third",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { ThirdScreen(navController) }
+                composable(
+                    "signin",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SignIn(navController) }
+                composable(
+                    "signup",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SignUp(navController) }
+                composable(
+                    "recovery",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { ForgotPass(navController) }
+                composable(
+                    "recovery2/{email}",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { backStackEntry ->
+                    val email = backStackEntry.arguments?.getString("email")
+                    OTPcheck(navController, email!!)
+                }
+
+
+
+
+
+                //MENU/SETTINGS/SEARCH
+                composable(
+                    "home",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
+                ) { Home() }
+                composable(
+                    "favourites",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) {  }//SecondScreen() }
+                composable(
+                    "notifications",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { Notifications() }
+                composable(
+                    "profile",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) {  }//SignIn() }
+
+                /*composable(
+                    "signup",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { SignUp(navController) }
+                composable(
+                    "recovery",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { ForgotPass(navController) }
+                composable(
+                    "recovery2/{email}",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { backStackEntry ->
+                    val email = backStackEntry.arguments?.getString("email")
+                    OTPcheck(navController, email!!)
+                }*/
+            }
         }
     }
 }
 
 
 
-@Composable
+/*@Composable
 fun Start(){
     val navController = rememberNavController()
 
@@ -109,7 +260,7 @@ fun Start(){
             OTPcheck(navController, email!!)
         }
     }
-}
+}*/
 
 
 
@@ -179,7 +330,7 @@ private fun FirstScreen(navController: NavController){
             color = colorResource(id = R.color.white),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(900),
-            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontFamily = FontFamily(Font(R.font.raleway_regular)),
             fontSize = 35.sp,
             lineHeight = 35.22.sp,
             modifier = Modifier
@@ -255,7 +406,7 @@ private fun FirstScreen(navController: NavController){
             Text (
                 "Начать",
                 color = colorResource(id = R.color.text),
-                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontWeight = FontWeight(600),
                 lineHeight = 16.44.sp,
                 fontSize = 14.sp,
@@ -309,7 +460,7 @@ private fun SecondScreen(navController: NavController){
             color = colorResource(id = R.color.white),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(700),
-            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontFamily = FontFamily(Font(R.font.raleway_regular)),
             fontSize = 34.sp,
             lineHeight = 44.2.sp,
             modifier = Modifier
@@ -323,7 +474,7 @@ private fun SecondScreen(navController: NavController){
             color = colorResource(id = R.color.white),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(400),
-            //fontFamily = FontFamily(Font(R.font.poppins_regular)),
+            fontFamily = FontFamily(Font(R.font.poppins_regular)),
             fontSize = 16.sp,
             lineHeight = 24.sp,
             modifier = Modifier
@@ -361,7 +512,7 @@ private fun SecondScreen(navController: NavController){
             Text (
                 "Далее",
                 color = colorResource(id = R.color.text),
-                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontWeight = FontWeight(600),
                 lineHeight = 16.44.sp,
                 fontSize = 14.sp,
@@ -408,7 +559,7 @@ private fun ThirdScreen(navController: NavController){
             color = colorResource(id = R.color.white),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(700),
-            //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+            fontFamily = FontFamily(Font(R.font.raleway_regular)),
             fontSize = 34.sp,
             lineHeight = 44.2.sp,
             modifier = Modifier
@@ -422,7 +573,7 @@ private fun ThirdScreen(navController: NavController){
             color = colorResource(id = R.color.white),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight(400),
-            //fontFamily = FontFamily(Font(R.font.poppins_regular)),
+            fontFamily = FontFamily(Font(R.font.poppins_regular)),
             fontSize = 16.sp,
             lineHeight = 24.sp,
             modifier = Modifier
@@ -458,7 +609,7 @@ private fun ThirdScreen(navController: NavController){
             Text (
                 "Далее",
                 color = colorResource(id = R.color.text),
-                //fontFamily = FontFamily(Font(R.font.raleway_regular)),
+                fontFamily = FontFamily(Font(R.font.raleway_regular)),
                 fontWeight = FontWeight(600),
                 lineHeight = 16.44.sp,
                 fontSize = 14.sp,
