@@ -62,18 +62,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-fun Home(){
+fun Home(navController: NavController){
 
     val context = LocalContext.current
-
-
-
     var searchText by remember { mutableStateOf("") }
 
     Box (
@@ -230,9 +228,13 @@ fun Home(){
                             unfocusedIndicatorLineThickness = 0.dp
                         )
                         .weight(1f)
-                        .shadow(4.dp, shape = RoundedCornerShape(14.dp)),
-
-                    enabled = true,
+                        .shadow(4.dp, shape = RoundedCornerShape(14.dp))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { navController.navigate("search") }
+                        ),
+                    enabled = false,
                     singleLine = true
                 ) {
                     TextFieldDefaults.DecorationBox(
@@ -362,9 +364,9 @@ fun Home(){
                 Text (
                     text = "Популярное",
                     fontSize = 16.sp,
+                    lineHeight = 24.sp,
                     fontWeight = FontWeight(500),
                     fontFamily = FontFamily(Font(R.font.raleway_regular)),
-                    lineHeight = 24.sp,
                     color = colorResource(id = R.color.text),
                     textAlign = TextAlign.Start,
                     modifier = Modifier.weight(1f)

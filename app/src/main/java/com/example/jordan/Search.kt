@@ -1,6 +1,8 @@
 package com.example.jordan
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,18 +50,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-fun Search() {
+fun Search(navController: NavController) {
 
     val prefHelper = SharedPreferenceHelper(LocalContext.current)
 
     var searchText by remember { mutableStateOf("") }
+
+    var num by remember { mutableIntStateOf(prefHelper.getIntData("search_count")) }
+    var history by remember { mutableStateOf(prefHelper.getStringSetData("history")?.toList() ?: emptyList() )}
+
+    Log.e("history", history.joinToString(", "))
 
     Box (
         modifier = Modifier
@@ -77,7 +87,7 @@ fun Search() {
                     .padding(start = 20.dp, end = 20.dp)
             ) {
                 Button(
-                    onClick = { },//navController.navigate("signin") },
+                    onClick = { navController.navigate("scrnavcont") },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.button_back1),
                         contentColor = colorResource(id = R.color.button_back1),
@@ -187,7 +197,21 @@ fun Search() {
                                 )
                             ),
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 18.83.dp)
+                            modifier = Modifier
+                                .padding(start = 18.83.dp)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    onClick = {
+                                        val newHistory = history.plus(num.toString()+searchText).toSet()
+                                        num += 1
+                                        prefHelper.saveIntData("search_count", num)
+                                        prefHelper.saveStringSetData("history", newHistory)
+
+                                        num = prefHelper.getIntData("search_count")
+                                        history = prefHelper.getStringSetData("history")?.toList() ?: emptyList()
+                                    }
+                                )
                         )
                     },
 
@@ -206,7 +230,7 @@ fun Search() {
             }
 
 
-            val history = prefHelper.getStringSetData("search")?.toList() ?: emptySet()
+
 
             if(history.isNotEmpty()) {
                 val indexedWords = mutableListOf<Pair<Int, String>>()
@@ -222,12 +246,10 @@ fun Search() {
 
                 val sortedIndexedWords = indexedWords.sortedBy { it.first }
 
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                LazyColumn (
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
+                        .padding(start = 21.dp)
                 ) {
                     for (pair in sortedIndexedWords) {
                         item {
@@ -246,11 +268,17 @@ fun Search() {
                                 Text(
                                     text = pair.second,
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight(500),
                                     lineHeight = 16.sp,
+                                    fontWeight = FontWeight(500),
                                     fontFamily = FontFamily(Font(R.font.raleway_regular)),
                                     color = colorResource(id = R.color.text),
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            onClick = { searchText = pair.second }
+                                        )
                                 )
                             }
                         }

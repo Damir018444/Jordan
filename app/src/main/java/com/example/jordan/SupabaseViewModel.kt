@@ -2,8 +2,6 @@ package com.example.jordan
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jordan.SupabaseClient.supabase
@@ -12,12 +10,16 @@ import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.gotrue.providers.builtin.OTP
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
+import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.launch
+import okhttp3.Address
+import kotlin.reflect.jvm.internal.impl.resolve.constants.KClassValue.Value
+import kotlin.time.Duration.Companion.minutes
 
-class SupabaseAuthViewModel: ViewModel() {
+class SupabaseViewModel: ViewModel() {
 
     fun signUp(context: Context, name: String, userEmail: String, userPass: String, callback: (Int) -> Unit) {
         viewModelScope.launch {
@@ -193,6 +195,7 @@ class SupabaseAuthViewModel: ViewModel() {
 
 
 
+    //DATABASE
     private fun insertData(authId: String, name: String){
         viewModelScope.launch {
             try {
@@ -205,13 +208,116 @@ class SupabaseAuthViewModel: ViewModel() {
         }
     }
 
-    fun updateData(name: String){
+
+    fun getUserDataType1(context: Context, onDataRetrieved: (list: List<String>) -> Unit){
         viewModelScope.launch {
-            try {
-                val authId = supabase.auth.currentUserOrNull()?.id ?: ""
-                supabase.postgrest.from("jordan").insert(listOf(authId, name))
-            } catch (e: Exception) {
-                Log.e("UPDATE_DATA", "Error has appeared: ${e.message}")
+            var list: List<String> = listOf()
+            val authId = getAuthId(context)
+            if(authId != null) {
+                try {
+                    val result = supabase.from("jordan")
+                        .select(Columns.list("name")){
+                            filter {
+                                eq("auth_id", authId)
+                            }
+                        }.decodeSingle<Map<String, String>>()
+
+                    val userEmail = supabase.auth.currentUserOrNull()?.email
+                    if (userEmail == null) Log.e("GET_ALL_USER_DATA", "User Email Is NULL")
+
+                    list = list.plus(arrayOf(result["name"] as String, userEmail?:"???"))
+
+                    onDataRetrieved(list)
+                } catch (e: Exception) {
+                    Log.e("GET_ALL_USER_DATA", "Error has appeared: ${e.message}")
+                }
+            } else Log.e("GET_ALL_USER_DATA", "authId Is NULL")
+        }
+    }
+
+    fun getUserDataType2(context: Context, onDataRetrieved: (list: List<String>) -> Unit){
+        viewModelScope.launch {
+            var list: List<String> = listOf()
+            val authId = getAuthId(context)
+            if(authId != null) {
+                try {
+                    val result = supabase.from("jordan")
+                        .select(Columns.list("name", "surname", "address")){
+                            filter {
+                                eq("auth_id", authId)
+                            }
+                        }.decodeSingle<Map<String, String>>()
+
+                    val userPhone = supabase.auth.currentUserOrNull()?.phone
+                    if (userPhone == null) Log.e("GET_ALL_USER_DATA", "User Email Is NULL")
+
+                    list = list.plus(arrayOf(result["name"] as String, result["surname"] as String,
+                        result["address"] as String, userPhone?:"???"))
+
+                    onDataRetrieved(list)
+                } catch (e: Exception) {
+                    Log.e("GET_ALL_USER_DATA", "Error has appeared: ${e.message}")
+                }
+            } else Log.e("GET_ALL_USER_DATA", "authId Is NULL")
+        }
+    }
+
+
+    fun updateDataType1(context: Context, name: String, newEmail: String, newPass: String, callback: (Int) -> Unit){
+        viewModelScope.launch {
+            val authId = getAuthId(context)
+            if(authId != null) {
+                try {
+                    supabase.postgrest.from("jordan").update({ set("name", name) }) {
+                        filter {
+                            eq("auth_id", authId)
+                        }
+                    }
+
+                    supabase.auth.updateUser {
+                        email = newEmail
+                        password = newPass
+                    }
+
+                    callback(1)
+                } catch (e: Exception) {
+                    callback(-1)
+                    Log.e("UPDATE_DATA", "Error has appeared: ${e.message}")
+                }
+            } else {
+                callback(-11)
+                Log.e("GET_ALL_USER_DATA", "authId Is NULL")
+            }
+        }
+    }
+
+    fun updateDataType2(context: Context, name: String, surname: String, userPhone: String, address: String, callback: (Int) -> Unit){
+        viewModelScope.launch {
+            val authId = getAuthId(context)
+            if(authId != null) {
+                try {
+                    supabase.postgrest.from("jordan").update({
+                        set("name", name)
+                        set("surname", surname)
+                        set("address", address)
+                    }) {
+                        filter {
+                            eq("auth_id", authId)
+                        }
+                    }
+
+                    supabase.auth.updateUser {
+                        phone = userPhone
+                    }
+
+                    callback(1)
+                } catch (e: Exception) {
+                    callback(-1)
+                    Log.e("UPDATE_DATA", "Error has appeared: ${e.message}")
+                }
+            } else {
+                callback(-11)
+                Log.e("GET_ALL_USER_DATA", "authId Is NULL")
             }
         }
     }
@@ -229,6 +335,71 @@ class SupabaseAuthViewModel: ViewModel() {
 
 
 
+    //STORAGE
+    fun createBucket(name: String, callback: (Int) -> Unit){
+        viewModelScope.launch {
+            try {
+                supabase.storage.createBucket(id = name){
+                    public = false
+                    fileSizeLimit = 10.megabytes
+                }
+                callback(1)
+            } catch (e: Exception){
+                Log.e("CREATE_BUCKET", "Error has appeared: ${e.message}")
+                callback(-1)
+            }
+        }
+    }
+
+
+    fun uploadFile(context: Context, bucketName: String, byteArray: ByteArray, callback: (Int) -> Unit){
+        viewModelScope.launch {
+            try {
+                val bucket = supabase.storage[bucketName]
+                val authId = getAuthId(context)
+                if (authId != null) {
+                    bucket.upload("$authId.png", byteArray, true)
+                    callback(1)
+                } else Log.e("UPLOAD_FILE", "AuthId is NULL")
+            } catch (e: Exception){
+                Log.e("UPLOAD_FILE", "Error has appeared: ${e.message}")
+                callback(-1)
+            }
+        }
+    }
+
+
+    fun getFile(context: Context, bucketName: String, onImageUrlRetrieved:(url: String) -> Unit){
+        viewModelScope.launch {
+            try {
+                val authId = getAuthId(context)
+                if (authId != null) {
+                    val bucket = supabase.storage[bucketName]
+                    val url = bucket.createSignedUploadUrl("$authId.png")
+                    onImageUrlRetrieved(url.toString())
+                } else Log.e("GET_FILE", "AuthId is NULL")
+            } catch (e: Exception){
+                Log.e("GET_FILE", "Error has appeared: ${e.message}")
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //TOKEN
     private fun saveToken(context: Context) {
         viewModelScope.launch {
             val accessToken = supabase.auth.currentAccessTokenOrNull() ?: ""
@@ -244,5 +415,10 @@ class SupabaseAuthViewModel: ViewModel() {
     private fun getToken(context: Context): String? {
         val sharedPref = SharedPreferenceHelper(context)
         return sharedPref.getStringData("accessToken")
+    }
+
+    private fun getAuthId(context: Context): String? {
+        val sharedPref = SharedPreferenceHelper(context)
+        return sharedPref.getStringData("authId")
     }
 }

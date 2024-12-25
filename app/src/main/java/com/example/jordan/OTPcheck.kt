@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,7 +56,7 @@ import java.util.Locale
 @Composable
 fun OTPcheck(navController: NavController, email: String){
 
-    val viewModel: SupabaseAuthViewModel = viewModel()
+    val viewModel: SupabaseViewModel = viewModel()
 
     var value by remember { mutableStateOf("") }
 

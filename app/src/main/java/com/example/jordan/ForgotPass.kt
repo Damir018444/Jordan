@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -39,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -48,7 +46,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -63,7 +60,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun ForgotPass(navController: NavController) {
 
-    val viewModel: SupabaseAuthViewModel = viewModel()
+    val viewModel: SupabaseViewModel = viewModel()
 
     var isPressed by remember { mutableStateOf(false) }
 
@@ -86,7 +83,7 @@ fun ForgotPass(navController: NavController) {
     ) {
 
         Button(
-            onClick = { navController.navigate("signup") },
+            onClick = { navController.navigate("signin") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.button_back1),
                 contentColor = colorResource(id = R.color.button_back1),

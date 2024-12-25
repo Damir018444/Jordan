@@ -35,7 +35,7 @@ class BarShape(
             val cutoutLeftX = cutoutCenterX - cutoutEdgeOffset
             val cutoutRightX = cutoutCenterX + cutoutEdgeOffset
 
-            Log.e("cutoutLeftX", cutoutLeftX.toString())
+            //Log.e("cutoutLeftX", cutoutLeftX.toString())
 
             val yOffset = density.run { 20.5.dp.toPx() }
 

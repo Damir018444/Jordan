@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import kotlinx.datetime.LocalDate
 import java.time.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -50,11 +51,11 @@ import java.util.Calendar
 import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 
-@Preview(showBackground = true, showSystemUi = false,
+/*@Preview(showBackground = true, showSystemUi = false,
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
-)
+)*/
 @Composable
-fun Notifications(){
+fun Notifications(navController: NavController){
 
     val boxBack = colorResource(id = R.color.white2)
 
@@ -86,7 +87,7 @@ fun Notifications(){
                     .padding(start = 20.dp, end = 20.dp)
             ) {
                 Button (
-                    onClick = {  },//navController.navigate("signin") },
+                    onClick = { navController.navigate("scrnavcont") },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.button_back1),
                         contentColor = colorResource(id = R.color.button_back1),

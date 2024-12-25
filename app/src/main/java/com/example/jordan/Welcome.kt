@@ -126,43 +126,36 @@ class MainActivity : ComponentActivity() {
 
                 //HOME/CART/ORDERS
                 composable(
-                    "first",
+                    "scrnavcont",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
-                ) { FirstScreen(navController) }
+                ) { ScreensNavController(navController) }
                 composable(
-                    "second",
+                    "home",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { SecondScreen(navController) }
+                ) { Home(navController) }
                 composable(
-                    "third",
+                    "favourites",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { ThirdScreen(navController) }
-                composable(
+                ) {  }
+                /*composable(
                     "signin",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { SignIn(navController) }
+                ) {  }
                 composable(
                     "signup",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { SignUp(navController) }
+                ) {  }
                 composable(
                     "recovery",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { ForgotPass(navController) }
-                composable(
-                    "recovery2/{email}",
-                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { backStackEntry ->
-                    val email = backStackEntry.arguments?.getString("email")
-                    OTPcheck(navController, email!!)
-                }
+                ) {  }
+*/
 
 
 
@@ -173,41 +166,27 @@ class MainActivity : ComponentActivity() {
                     "home",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing)) },
-                ) { Home() }
-                composable(
-                    "favourites",
-                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) {  }//SecondScreen() }
+                ) { Home(navController) }
                 composable(
                     "notifications",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { Notifications() }
+                ) { Notifications(navController) }
+                composable(
+                    "edit_profile",
+                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
+                ) { EditProfile(navController) }
                 composable(
                     "profile",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) {  }//SignIn() }
-
-                /*composable(
-                    "signup",
-                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { SignUp(navController) }
+                ) { Profile(navController) }
                 composable(
-                    "recovery",
+                    "search",
                     enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
                     exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { ForgotPass(navController) }
-                composable(
-                    "recovery2/{email}",
-                    enterTransition = { fadeIn(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                    exitTransition = { fadeOut(animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)) },
-                ) { backStackEntry ->
-                    val email = backStackEntry.arguments?.getString("email")
-                    OTPcheck(navController, email!!)
-                }*/
+                ) { Search(navController) }
             }
         }
     }

@@ -20,6 +20,15 @@ class SharedPreferenceHelper(private val context: Context) {
         return sharedPreferences.getString(key, null)
     }
 
+    fun saveIntData(key: String, data: Int) {
+        val sharedPreferences = context.getSharedPreferences(MY_PREF_KEY, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(key, data).apply()
+    }
+
+    fun getIntData(key: String): Int {
+        val sharedPreferences = context.getSharedPreferences(MY_PREF_KEY, Context.MODE_PRIVATE)
+        return sharedPreferences.getInt(key, 0)
+    }
 
     fun saveStringSetData(key: String, data: Set<String>) {
         val sharedPreferences = context.getSharedPreferences(MY_PREF_KEY, Context.MODE_PRIVATE)
