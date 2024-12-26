@@ -306,9 +306,9 @@ class SupabaseViewModel: ViewModel() {
                         }
                     }
 
-                    supabase.auth.updateUser {
+                    /*supabase.auth.updateUser {
                         phone = userPhone
-                    }
+                    }*/
 
                     callback(1)
                 } catch (e: Exception) {

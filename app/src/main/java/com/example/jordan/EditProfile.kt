@@ -87,9 +87,14 @@ fun EditProfile(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
+
+    var entered by remember { mutableStateOf(false) }
     viewModel.getUserDataType1(context) { data ->
-        name = data[0]
-        email = data[1]
+        if(!entered) {
+            name = data[0]
+            email = data[1]
+            entered = true
+        }
     }
 
     var errorText by remember { mutableStateOf("") }

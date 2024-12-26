@@ -89,12 +89,18 @@ fun Profile( navController: NavController) {
     var surname by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var userPhone by remember { mutableStateOf("") }
+    var userPhoneFormatted by remember { mutableStateOf("") }
+
+    var entered by remember { mutableStateOf(false) }
 
     viewModel.getUserDataType2(context) { data ->
-        name = data[0]
-        surname = data[1]
-        address = data[2]
-        userPhone = data[3]
+        if(!entered) {
+            name = data[0]
+            surname = data[1]
+            address = data[2]
+            userPhone = data[3]
+            entered = true
+        }
     }
 
 
@@ -190,14 +196,17 @@ fun Profile( navController: NavController) {
                             interactionSource = remember { MutableInteractionSource() },
                             onClick = {
 
+
+                                Log.e("PHONE","+$selectedItem${userPhone.replace("-","")}")
+
                                 if(isPressed) return@clickable
                                 isPressed = true
                                 if(name.trim().isNotEmpty()) {
                                     if(surname.trim().isNotEmpty()) {
-                                        if(userPhone.trim().isNotEmpty()) {
+                                        if(address.trim().isNotEmpty()) {
                                             if(userPhone.trim().isNotEmpty()) {
-                                                if (userPhone.trim().isNotEmpty()) {
-                                                    viewModel.updateDataType2(context, name, surname, userPhone, address) { code ->
+                                                if(userPhone.trim().length != 10) {
+                                                    viewModel.updateDataType2(context, name, surname, "+$selectedItem${userPhone.replace("-","")}", address) { code ->
                                                         errorText = when (code) {
                                                             1 -> { navController.navigate("edit_profile"); "Успешно" }
                                                             -1 -> "Ошибка"
@@ -206,9 +215,9 @@ fun Profile( navController: NavController) {
                                                         }
                                                         isPressed = false
                                                     }
-                                                } else errorText = "Введите Корректный Номер Телефона!"
-                                            } else errorText = "Введите Адрес!"
-                                        } else errorText = "Введите Номер Телефона!"
+                                                } else errorText = "Введите корректный номер телефона!"
+                                            } else errorText = "Введите Номер Телефона!"
+                                        } else errorText = "Введите Адрес!"
                                     } else errorText = "Введите Фамилию!"
                                 } else errorText = "Введите Имя"
                                 isPressed = false
@@ -613,10 +622,11 @@ fun Profile( navController: NavController) {
 
 
                 BasicTextField(
-                    value = userPhone,
+                    value = userPhoneFormatted,
                     onValueChange = {
                         if(it.length <= 12) {
-                            userPhone = formatPhoneNumber(it)
+                            userPhone = it
+                            userPhoneFormatted = formatPhoneNumber(it)
                         }
                     },
                     textStyle = TextStyle.Default.copy(
@@ -646,7 +656,7 @@ fun Profile( navController: NavController) {
                     singleLine = true
                 ) {
                     TextFieldDefaults.DecorationBox(
-                        value = userPhone,
+                        value = userPhoneFormatted,
                         innerTextField = it,
                         enabled = true,
                         singleLine = true,

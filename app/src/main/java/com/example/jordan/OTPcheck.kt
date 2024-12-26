@@ -73,7 +73,8 @@ fun OTPcheck(navController: NavController, email: String){
                 delay(1000)
                 timeLeft -= 1
             }
-            isRunning = false
+            timeLeft = 60
+            //isRunning = false
         }
     }
 
