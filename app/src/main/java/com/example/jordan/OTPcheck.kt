@@ -170,8 +170,6 @@ fun OTPcheck(navController: NavController, email: String){
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
-
             val keyboardController = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current
 
@@ -185,7 +183,7 @@ fun OTPcheck(navController: NavController, email: String){
                             focusManager.clearFocus()
                             viewModel.checkOTP(context, email, value) { code ->
                                 errorText = when (code) {
-                                    1 -> "Успешно" //navController.navigate("home") },
+                                    1 -> { navController.navigate("home"); "Успешно" }
                                     -1 -> "Какая-та ошибка"
                                     -11 -> "Ошибка сети"
                                     -111 -> "Не авторизован"
