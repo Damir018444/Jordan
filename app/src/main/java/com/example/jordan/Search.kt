@@ -244,7 +244,10 @@ fun Search(navController: NavController) {
                     }
                 }
 
+
                 val sortedIndexedWords = indexedWords.sortedBy { it.first }
+
+
 
                 LazyColumn (
                     verticalArrangement = Arrangement.spacedBy(16.dp),
