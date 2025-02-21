@@ -374,6 +374,22 @@ class SupabaseViewModel: ViewModel() {
             try {
                 val authId = getAuthId(context)
                 if (authId != null) {
+                    val bucket = supabase.storage.from(bucketName)
+                    val url = bucket.publicUrl("$authId.png")
+                    onImageUrlRetrieved(url)
+                } else Log.e("GET_FILE", "AuthId is NULL")
+            } catch (e: Exception){
+                Log.e("GET_FILE", "Error has appeared: ${e.message}")
+            }
+        }
+    }
+
+
+    /*fun getFile(context: Context, bucketName: String, onImageUrlRetrieved:(url: String) -> Unit){
+        viewModelScope.launch {
+            try {
+                val authId = getAuthId(context)
+                if (authId != null) {
                     val bucket = supabase.storage[bucketName]
                     val url = bucket.createSignedUploadUrl("$authId.png")
                     onImageUrlRetrieved(url.toString())
@@ -382,7 +398,7 @@ class SupabaseViewModel: ViewModel() {
                 Log.e("GET_FILE", "Error has appeared: ${e.message}")
             }
         }
-    }
+    }*/
 
 
 

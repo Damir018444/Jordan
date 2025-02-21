@@ -163,7 +163,7 @@ fun EditProfile(navController: NavController) {
 
 
                 viewModel.getFile(context,"pfp"){
-                    imageUrl = "$supabaseUrl/storage/v1/$it"
+                    imageUrl = it
                 }
 
                 if(imageUrl.isNotEmpty()){

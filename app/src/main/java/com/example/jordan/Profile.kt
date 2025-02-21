@@ -241,7 +241,7 @@ fun Profile( navController: NavController) {
 
 
                 viewModel.getFile(context,"pfp"){
-                    imageUrl = "$supabaseUrl/storage/v1/$it"
+                    imageUrl = it
                     Log.e("imageUrl", imageUrl)
                 }
 
