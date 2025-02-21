@@ -19,6 +19,7 @@ import okhttp3.Address
 import kotlin.reflect.jvm.internal.impl.resolve.constants.KClassValue.Value
 import kotlin.time.Duration.Companion.minutes
 
+//class
 class SupabaseViewModel: ViewModel() {
 
     fun signUp(context: Context, name: String, userEmail: String, userPass: String, callback: (Int) -> Unit) {
