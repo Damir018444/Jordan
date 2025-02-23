@@ -1,9 +1,11 @@
 package com.example.jordan
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -25,12 +27,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,15 +46,7 @@ import kotlin.math.log
     device = "spec:width=375dp,height=812dp,dpi=440,isRound=true",
 )*/
 @Composable
-fun ScreensNavController(navController: NavController){
-
-    val withPx = LocalContext.current.resources.displayMetrics.widthPixels
-
-    val barShape = BarShape(
-        offset = withPx / 2f,
-        circleRadius = 70.dp,
-        circleGap = 0.dp,
-    )
+fun ScreensNavController(navController: NavController) {
 
     val navItemList = listOf(
         NavItem(icon = ImageVector.vectorResource(id = R.drawable.bottomnav_home)),
@@ -59,19 +56,126 @@ fun ScreensNavController(navController: NavController){
         NavItem(icon = ImageVector.vectorResource(id = R.drawable.bottomnav_profile)),
     )
 
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
     /*if(selectedIndex == 4) navController.navigate("edit_profile")
     if(selectedIndex == 3) navController.navigate("notifications")*/
 
 
-    Scaffold(
+    Box (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.white2)),
+    ) {
+
+
+        when(selectedIndex){
+            0 -> Home(navController)
+            //1 -> { navController.navigate("favourites") }
+            //2 -> { navController.navigate("notifications") }
+            //3 -> { navController.navigate("notifications") }
+            //4 -> { navController.navigate("edit_profile") }
+        }
+
+        NavigationBar(
+            containerColor = Color.Transparent,
+            modifier = Modifier
+                //.background(Color.Red, shape = barShape)
+                .align(Alignment.BottomCenter)
+                .height(106.dp)
+                .paint(
+                    painterResource(id = R.drawable.bottomnav_back),
+                    contentScale = ContentScale.Crop
+                )
+        ) {
+            navItemList.forEachIndexed { index, navItem ->
+                NavigationBarItem(
+                    selected = selectedIndex == index,
+                    onClick = {
+                        selectedIndex = index
+                        when (index) {
+                            3 -> navController.navigate("notifications")
+                            4 -> navController.navigate("edit_profile")
+                        }
+                        Log.e("selectedIndex", selectedIndex.toString())
+                    },
+                    enabled = navItem.icon != null,
+                    icon = {
+                        if (navItem.icon != null)
+                            Icon(
+                                imageVector = navItem.icon,
+                                contentDescription = "",
+                                tint = if (selectedIndex == index) colorResource(id = R.color.bottomnav_icon_selected)
+                                else colorResource(id = R.color.bottomnav_icon_unselected)
+                            )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.Transparent,
+                        selectedIconColor = colorResource(id = R.color.bottomnav_icon_selected),
+                        unselectedIconColor = colorResource(id = R.color.bottomnav_icon_unselected),
+                    ),
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                )
+            }
+        }
+
+
+        if((selectedIndex != 3) and (selectedIndex != 4)) {
+            FloatingActionButton(
+                onClick = { },
+                contentColor = colorResource(id = R.color.white),
+                containerColor = colorResource(id = R.color.bottomnav_icon_selected),
+                shape = RoundedCornerShape(30.dp),
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 0.dp,
+                    pressedElevation = 0.dp,
+                    hoveredElevation = 0.dp,
+                    focusedElevation = 0.dp,
+                ),
+
+                modifier = Modifier
+                    .size(56.dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(y = (-50).dp)
+                    .shadow(
+                        elevation = 8.dp, spotColor = Color(91, 158, 255, (255 / 100) * 60),
+                        ambientColor = Color(91, 158, 255, (255 / 100) * 60)
+                    )
+                //.padding(bottom = 50.dp)
+            ) {
+                Icon(
+                    painter = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_fab)),
+                    contentDescription = "Cart",
+                    tint = colorResource(id = R.color.white)
+                )
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if((selectedIndex != 3) and (selectedIndex != 4)) {
-                Card(
+                *//*Card(
                     colors = CardDefaults.cardColors(
                         containerColor = colorResource(id = R.color.white),
                         contentColor = colorResource(id = R.color.white)
@@ -87,46 +191,51 @@ fun ScreensNavController(navController: NavController){
                             spotColor = Color.Black,
                             ambientColor = Color.Black
                         )
+                ) {*//*
+
+
+                NavigationBar(
+                    containerColor = Color.Transparent,
+                    modifier = Modifier
+                        //.background(Color.Red, shape = barShape)
+                        .height(106.dp)
+                        .paint(
+                            painterResource(id = R.drawable.bottomnav_back),
+                            contentScale = ContentScale.Crop
+                        )
+
                 ) {
 
-                    NavigationBar(
-                        containerColor = colorResource(id = R.color.white),
-                        modifier = Modifier
-                            .background(Color.Red, shape = barShape)
-                            .height(106.dp)
-
-                    ) {
-                        navItemList.forEachIndexed { index, navItem ->
-                            NavigationBarItem(
-                                selected = selectedIndex == index,
-                                onClick = {
-                                    selectedIndex = index
-                                    when (index) {
-                                        3 -> navController.navigate("notifications")
-                                        4 -> navController.navigate("edit_profile")
-                                    }
-                                    Log.e("selectedIndex", selectedIndex.toString()
-                                )
-                                },
-                                enabled = navItem.icon != null,
-                                icon = {
-                                    if (navItem.icon != null)
-                                        Icon(
-                                            imageVector = navItem.icon,
-                                            contentDescription = "",
-                                            tint = if (selectedIndex == index) colorResource(id = R.color.bottomnav_icon_selected)
-                                            else colorResource(id = R.color.bottomnav_icon_unselected)
-                                        )
-                                },
-                                colors = NavigationBarItemDefaults.colors(
-                                    indicatorColor = Color.Transparent,
-                                    selectedIconColor = colorResource(id = R.color.bottomnav_icon_selected),
-                                    unselectedIconColor = colorResource(id = R.color.bottomnav_icon_unselected),
-                                ),
-                                modifier = Modifier
-                                    .padding(top = 30.dp)
+                    navItemList.forEachIndexed { index, navItem ->
+                        NavigationBarItem(
+                            selected = selectedIndex == index,
+                            onClick = {
+                                selectedIndex = index
+                                when (index) {
+                                    3 -> navController.navigate("notifications")
+                                    4 -> navController.navigate("edit_profile")
+                                }
+                                Log.e("selectedIndex", selectedIndex.toString()
                             )
-                        }
+                            },
+                            enabled = navItem.icon != null,
+                            icon = {
+                                if (navItem.icon != null)
+                                    Icon(
+                                        imageVector = navItem.icon,
+                                        contentDescription = "",
+                                        tint = if (selectedIndex == index) colorResource(id = R.color.bottomnav_icon_selected)
+                                        else colorResource(id = R.color.bottomnav_icon_unselected)
+                                    )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                indicatorColor = Color.Transparent,
+                                selectedIconColor = colorResource(id = R.color.bottomnav_icon_selected),
+                                unselectedIconColor = colorResource(id = R.color.bottomnav_icon_unselected),
+                            ),
+                            modifier = Modifier
+                                .padding(top = 30.dp)
+                        )
                     }
                 }
             }
@@ -190,7 +299,7 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, navControll
             }
         }
     }
-}
+}*/
 
 
 

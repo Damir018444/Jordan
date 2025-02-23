@@ -125,7 +125,9 @@ fun Home(navController: NavController){
                         //.align(Alignment.CenterStart)
                         .size(width = 25.71.dp, height = 18.dp)
                         .clickable(
-                            onClick = { },
+                            onClick = {
+
+                            },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         )

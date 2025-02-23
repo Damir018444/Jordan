@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             navigationViewModel.navController.value = navController
 
-            NavHost(navController = navController, startDestination = "splash") {
+            NavHost(navController = navController, startDestination = "scrnavcont") {
                 composable("splash") { SplashScreen(navController) }
 
                 //REGISTRATION/AUTHENTICATION
